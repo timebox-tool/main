@@ -1,15 +1,13 @@
-import { Avatar, Box, Container, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Paper, Slider, SliderProps, TextField, Typography } from '@material-ui/core';
-import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
+import { Box, Container, IconButton, List, Paper, Slider, SliderProps, TextField } from '@material-ui/core';
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
-import StopIcon from '@material-ui/icons/Stop';
 import { compose, concat, isEmpty } from 'ramda';
-import React, { Fragment, useCallback, useMemo, useState } from 'react';
-import { useEffectOnce, useToggle } from 'react-use';
-import { minute2Second, second2Minute } from 'util/time';
+import React, { useCallback, useMemo, useState } from 'react';
 import { KeyCatcher } from '../../component/key-catcher';
-import { useTimer } from '../../hooks/use-timer';
 import { event2Value, isArray } from '../../util/obj';
-import { useTimeBoxPageStyles, useTimeBoxItemStyles } from './index.style';
+import { useTimeBoxPageStyles } from './index.style';
+import { TimeBoxItem, TimeBoxItemProps } from './time-box-item';
+
+
 
 const defaultName = '';
 const defaultLimit = 10;
@@ -20,13 +18,16 @@ export const TimeBoxPage = (p: TimeBoxPageProps) => {
   const [name, setName] = useState(defaultName);
   const [limit, setLimit] = useState(defaultLimit);
   const backToDefaultName = () => setName(defaultName);
-  const isBtnDisabled = useMemo(() => isEmpty(name), [name]);
+  const notReady = useMemo(() => isEmpty(name), [name]);
   const styles = useTimeBoxPageStyles();
 
   const newTimer = useCallback(() => {
+    if (notReady) {
+      return;
+    }
     backToDefaultName();
     data.newTimeBox({ who: name, limit });
-  }, [data, name, limit]);
+  }, [data, name, limit, notReady]);
 
   const onTimeBoxLimitSliderChangeCommitted: SliderProps['onChangeCommitted'] = (_, v) => {
     if (!isArray(v)) {
@@ -38,7 +39,7 @@ export const TimeBoxPage = (p: TimeBoxPageProps) => {
     <Container>
       <Paper className={styles.container}>
 
-        <Box display='flex' flexDirection='row' justifyContent='center'>
+        <Box display='flex' flexDirection='row' justifyContent='center' mb={2}>
           <Box>
             {/** time slider for determine how long the timeBox is */}
             <Slider defaultValue={defaultLimit} step={5} min={5} max={30} marks valueLabelDisplay='auto' onChangeCommitted={onTimeBoxLimitSliderChangeCommitted} />
@@ -46,68 +47,32 @@ export const TimeBoxPage = (p: TimeBoxPageProps) => {
             <Box display='flex' alignItems='center'>
               {/** input for determine who will be related to the timeBox */}
               <KeyCatcher onEnter={newTimer}>
-                <TextField variant='outlined' value={name} onChange={compose(setName, event2Value)} InputProps={{
-                  endAdornment: <IconButton disabled={isBtnDisabled} onClick={newTimer}>
-                    <HourglassEmptyIcon />
-                  </IconButton>
-                }} />
+                <TextField
+                  placeholder='Activity or People'
+                  variant='outlined'
+                  value={name}
+                  onChange={compose(setName, event2Value)}
+                  InputProps={{
+                    endAdornment: <IconButton disabled={notReady} onClick={newTimer}>
+                      <HourglassEmptyIcon />
+                    </IconButton>
+                  }} />
               </KeyCatcher>
             </Box>
           </Box>
         </Box>
 
         <List>
-          {data.timeBoxes.map(t => <Box key={t.id}>
-            <TimeBoxItem  {...t} />
-            <Divider />
-          </Box>)}
+          {data.timeBoxes.map(t =>
+            <Box key={t.id}>
+              <TimeBoxItem  {...t} />
+            </Box>
+          )}
         </List>
 
       </Paper>
     </Container>
 
-  );
-};
-
-type TimeBoxItemProps = {
-  who: string;
-  limit: number;
-};
-
-const TimeBoxItem = (p: TimeBoxItemProps) => {
-  const [isStopBtnDisabled, setStopBtnDisabled] = useToggle(false);
-  /** timers */
-  const timer = useTimer();
-  const costMinSndPair = useMemo(() => second2Minute(timer.time), [timer.time]);
-  const isTimeout = useMemo(() => minute2Second(p.limit) < timer.time, [timer.time, p.limit]);
-  const styles = useTimeBoxItemStyles({ isTimeout });
-
-  useEffectOnce(timer.go);
-
-  const onStopClick = () => {
-    timer.stop();
-    setStopBtnDisabled(true);
-  };
-
-  return (
-    <ListItem>
-      <ListItemAvatar>
-        <Avatar className={styles.clockIcon}>
-          <AccessAlarmIcon />
-        </Avatar>
-      </ListItemAvatar>
-      <ListItemText
-        primary={<Typography variant='subtitle1'>{`${p.who} has cost`}</Typography>}
-        secondary={<Fragment>
-          <Typography variant='body2'>{`${costMinSndPair.minutes} MIN ${costMinSndPair.reservedSeconds} S`}</Typography>
-          <Typography variant='body2'>{`LIMIT: ${p.limit}MIN`}</Typography>
-        </Fragment>} />
-      <ListItemSecondaryAction>
-        <IconButton onClick={onStopClick} edge='end' disabled={isStopBtnDisabled}>
-          <StopIcon />
-        </IconButton>
-      </ListItemSecondaryAction>
-    </ListItem>
   );
 };
 
