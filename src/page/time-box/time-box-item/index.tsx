@@ -1,7 +1,7 @@
-import { Avatar, IconButton, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Typography } from "@material-ui/core";
+import { Avatar, Box, IconButton, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Typography } from "@material-ui/core";
 import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
 import StopIcon from '@material-ui/icons/Stop';
-import React, { Fragment } from "react";
+import React from "react";
 import { minute2Second } from "util/time";
 import { useTimeBoxItemStyles } from "../index.style";
 import { useTimeBoxItemHook } from "./index.hook";
@@ -24,10 +24,12 @@ export const TimeBoxItem = (p: TimeBoxItemProps) => {
       </ListItemAvatar>
       <ListItemText
         primary={<Typography variant='subtitle1'>{`${p.who} has cost`}</Typography>}
-        secondary={<Fragment>
-          <Typography component='span' variant='body2'>{`${operations.costTime.minutes} MIN ${operations.costTime.reservedSeconds} S`}</Typography>
-          <Typography component='span' variant='body2'>{`LIMIT: ${p.limit}MIN`}</Typography>
-        </Fragment>} />
+        secondary={
+          <Box display='flex' flexDirection='column'>
+            <Typography component='span' variant='body2'>{`${operations.costTime.minutes} MIN ${operations.costTime.reservedSeconds} S`}</Typography>
+            <Typography component='span' variant='body2'>{`LIMIT: ${p.limit}MIN`}</Typography>
+          </Box>
+        } />
       <ListItemSecondaryAction>
         <IconButton onClick={operations.timerOps.stop} edge='end' disabled={operations.timerOps.isTimerStopped}>
           <StopIcon />
