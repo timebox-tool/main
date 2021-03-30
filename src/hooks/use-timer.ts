@@ -1,12 +1,12 @@
-import { add } from 'ramda';
-import { useState } from 'react';
-import { useToggle } from 'react-use';
+import { useState } from 'react'
+import { useToggle } from 'react-use'
 
 /** millisecond */
 const timeStep = 1000
 
 export const useTimer = () => {
-	const [time, setSnd] = useState(0)
+	const [time, setTime] = useState(0)
+	const [startTime, setStartTime] = useState<Date>(new Date())
 	const [isTimerStopped, setIsTimerStopped] = useToggle(false)
 	const stopTimer = () => setIsTimerStopped(true)
 	const [id, setId] = useState<number>()
@@ -15,7 +15,11 @@ export const useTimer = () => {
 	/*                                    WRITE                                   */
 	/* -------------------------------------------------------------------------- */
 	const go = () => {
-		const fn = () => setSnd(add(1))
+		setStartTime(new Date())
+		const fn = () => {
+			const seconds = Math.floor((Date.now() - startTime.getTime()) / 1000)
+			setTime(seconds)
+		}
 		const id = window.setInterval(fn, timeStep)
 		setId(id)
 	}
