@@ -1,5 +1,5 @@
-import { colors, makeStyles } from '@material-ui/core';
-import { failColor, fillingColor, succColor } from 'theme';
+import { colors, makeStyles } from '@material-ui/core'
+import { failColor, fillingColor, succColor } from 'theme'
 
 type StyleConf = {
 	isTimeout: boolean

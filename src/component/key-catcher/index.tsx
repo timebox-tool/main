@@ -4,7 +4,7 @@ import { Key } from 'ts-key-enum';
 import { noop } from '../../util/fn';
 
 export type KeyCatcherProps = PropsWithChildren<{
-  onEnter: () => any;
+  onEnter?: () => any;
 }>;
 
 export const KeyCatcher = ({

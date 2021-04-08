@@ -30,6 +30,8 @@ export const TimeBoxPage = (p: TimeBoxPageProps) => {
   }, [data, name, limit, notReady]);
 
   const onTimeBoxLimitSliderChangeCommitted: SliderProps['onChangeCommitted'] = (_, v) => {
+    console.log(_);
+    console.log(v);
     if (!isArray(v)) {
       setLimit(v);
     }
@@ -42,7 +44,7 @@ export const TimeBoxPage = (p: TimeBoxPageProps) => {
         <Box display='flex' flexDirection='row' justifyContent='center' mb={2}>
           <Box>
             {/** time slider for determine how long the timeBox is */}
-            <Slider defaultValue={defaultLimit} step={5} min={5} max={30} marks valueLabelDisplay='auto' onChangeCommitted={onTimeBoxLimitSliderChangeCommitted} />
+            <Slider data-testid='timer-limit-slider' defaultValue={defaultLimit} step={5} min={5} max={30} marks valueLabelDisplay='auto' onChangeCommitted={onTimeBoxLimitSliderChangeCommitted} />
 
             <Box display='flex' alignItems='center'>
               {/** input for determine who will be related to the timeBox */}
@@ -53,7 +55,7 @@ export const TimeBoxPage = (p: TimeBoxPageProps) => {
                   value={name}
                   onChange={compose(setName, event2Value)}
                   InputProps={{
-                    endAdornment: <IconButton disabled={notReady} onClick={newTimer}>
+                    endAdornment: <IconButton title='start timing' disabled={notReady} onClick={newTimer}>
                       <HourglassEmptyIcon />
                     </IconButton>
                   }} />
@@ -64,7 +66,7 @@ export const TimeBoxPage = (p: TimeBoxPageProps) => {
 
         <List>
           {data.timeBoxes.map(t =>
-            <Box key={t.id}>
+            <Box key={t.id} data-testid='timer-list-item'>
               <TimeBoxItem  {...t} />
             </Box>
           )}

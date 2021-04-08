@@ -25,7 +25,7 @@ export const TimeBoxItem = (p: TimeBoxItemProps) => {
       <ListItemText
         primary={<Typography variant='subtitle1'>{`${p.who} has cost`}</Typography>}
         secondary={
-          <Box display='flex' flexDirection='column'>
+          <Box component='span' display='flex' flexDirection='column'>
             <Typography component='span' variant='body2'>{`${operations.costTime.minutes} MIN ${operations.costTime.reservedSeconds} S`}</Typography>
             <Typography component='span' variant='body2'>{`LIMIT: ${p.limit}MIN`}</Typography>
           </Box>
