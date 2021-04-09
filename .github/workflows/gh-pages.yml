@@ -1,29 +1,38 @@
 name: github pages
 
 on:
-  push:
-    branches:
-      - main  # Set a branch name to trigger deployment
+    push:
+        branches:
+            - main # Set a branch name to trigger deployment
 
 jobs:
-  deploy:
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true  # Fetch Hugo themes (true OR recursive)
-          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+    deploy:
+        runs-on: ubuntu-18.04
+        env:
+          DIST_DIR: ./dist
+        steps:
+            - uses: actions/checkout@v2
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
-        with:
-          hugo-version: '0.79.1'
+            - name: set node environment
+              uses: actions/setup-node@v1
+              with:
+                  node-version: '14'
 
-      - name: Build
-        run: hugo --minify
+            - name: build
+              run: |
+                  yarn
+                  yarn build
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+            # - name: push build result to remote
+            #   run: | 
+            #       cd $DIST_DIR
+            #       git init
+            #       git config --local user.name $USER_NAME
+            #       git config --local user.email $USER_EMAIL
+            #       git status
+            #       git remote add origin https://$MY_SECRET@github.com/$GITHUB_REPOSITORY.git
+            #       git checkout -b gh-pages
+            #       git add --all
+            #       git commit -m "deploy to github pages"
+            #       git push origin gh-pages -f
+            #       echo 🤘🤘🤘 go to check your app ~
