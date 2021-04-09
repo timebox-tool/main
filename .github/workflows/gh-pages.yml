@@ -1,9 +1,13 @@
-name: deploy github pages
-on: push
+name: github pages
 
-jobs: 
+on:
+  push:
+    branches:
+      - main  # Set a branch name to trigger deployment
+
+jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
         with:
