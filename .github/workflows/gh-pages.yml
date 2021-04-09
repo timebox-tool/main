@@ -11,21 +11,21 @@ jobs:
         env:
             MY_SECRET: ${{ secrets.admin_access }}
             GITHUB_REPOSITORY: timebox-tool/dist.git
-            DIST_DIR: ./dist
+            DIST_DIR: ./build
         steps:
             - uses: actions/checkout@v2
 
-            - name: set node environment
+            - name: Set node environment
               uses: actions/setup-node@v1
               with:
                   node-version: "14"
 
-            - name: build
+            - name: Build
               run: |
                   yarn
                   yarn build
 
-            - name: push build result to remote
+            - name: Push build result to remote
               run: |
                   cd $DIST_DIR
                   git init
