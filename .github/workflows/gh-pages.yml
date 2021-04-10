@@ -10,6 +10,8 @@ jobs:
         runs-on: ubuntu-18.04
         env:
             MY_SECRET: ${{ secrets.admin_access }}
+            MY_MAIL: oldsince2017@gmail.com
+            MY_NAME: kk
             GITHUB_REPOSITORY: timebox-tool/dist.git
             DIST_DIR: ./build
         steps:
@@ -28,11 +30,17 @@ jobs:
             - name: Push build result to remote
               run: |
                   cd $DIST_DIR
+
                   git init
                   git status
+
+
+                  git config --global user.email $MY_MAIL
+                  git config --global user.name $MY_NAME
                   git remote add origin https://$MY_SECRET@github.com/$GITHUB_REPOSITORY.git
-                  git checkout -b gh-pages
+
                   git add --all
+                  git checkout -b gh-pages
                   git commit -m "deploy to github pages"
                   git push origin gh-pages -f
                   echo 🤘🤘🤘 go to check your app ~
